@@ -1,4 +1,4 @@
-const OPENAI_KEY = "ضع_مفتاح_OpenAI_هنا"; // sk-xxxx
+const OPENAI_KEY = "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"; // sk-xxxx
 
 const chatBox = document.getElementById('chat-box');
 const userMsgInput = document.getElementById('user-msg');
