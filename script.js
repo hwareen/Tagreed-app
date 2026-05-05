@@ -1,4 +1,5 @@
-const OPENAI_KEY = "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"; // sk-xxxx
+// مفتاح Groq المجاني (gsk_...)
+const FREE_API_KEY = "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"; 
 
 const chatBox = document.getElementById('chat-box');
 const userMsgInput = document.getElementById('user-msg');
@@ -11,21 +12,21 @@ async function handleChat() {
     addBubble(text, 'user');
     userMsgInput.value = "";
 
-    const loading = addBubble("تغريد تفكر بعمق...", 'tagreed');
+    const loading = addBubble("تغريد تفكر...", 'tagreed');
 
     try {
-        const response = await fetch('https://openai.com', {
+        const response = await fetch('https://groq.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${OPENAI_KEY}`
+                'Authorization': `Bearer ${FREE_API_KEY}`
             },
             body: JSON.stringify({
-                model: "gpt-4o-mini",
+                model: "llama3-8b-8192", // نموذج مجاني وقوي جداً
                 messages: [
                     { 
                         role: "system", 
-                        content: "أنتِ تغريد، أخصائية نفسية راقية وفخمة. إذا ذكر المستخدم اسمه، حللي فوراً إذا كان ذكراً (أحمد، علي، إلخ) فخاطبيه بالمذكر. وإذا كان أنثى (سارة، ليلى، إلخ) فخاطبيها بالمؤنث. إذا لم يتضح، استخدمي صيغة المؤنث الافتراضية الدافئة." 
+                        content: "أنتِ تغريد، أخصائية نفسية دافئة. حللي اسم المستخدم في بداية الحوار، إذا كان ذكراً خاطبيه بالمذكر، وإذا أنثى بالمؤنث. لغتكِ عربية راقية وفخمة." 
                     },
                     { role: "user", content: text }
                 ]
@@ -33,16 +34,11 @@ async function handleChat() {
         });
 
         const data = await response.json();
-        
-        if (data.choices && data.choices[0]) {
-            loading.remove();
-            addBubble(data.choices[0].message.content, 'tagreed');
-        } else {
-            throw new Error("فشل الرد");
-        }
+        loading.remove();
+        addBubble(data.choices[0].message.content, 'tagreed');
 
     } catch (err) {
-        loading.innerText = "عذراً، أحتاج للتأكد من رصيدي أو مفتاح الـ API. أنا معكِ دائماً.";
+        loading.innerText = "عذراً، يبدو أن هناك ضغطاً على النظام المجاني. حاولي مرة أخرى.";
         console.error(err);
     }
 }
