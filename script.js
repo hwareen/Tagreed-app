@@ -12,7 +12,7 @@ async function handleChat() {
     addBubble(text, 'user');
     userMsgInput.value = "";
 
-    const loading = addBubble("تغريد تفكر...", 'tagreed');
+    const loading = addBubble("تغريد تفكر....", 'tagreed');
 
     try {
         const response = await fetch('https://groq.com', {
