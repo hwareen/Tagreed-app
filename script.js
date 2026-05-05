@@ -8,7 +8,7 @@ const firebaseConfig = {
   messagingSenderId: "638611639219",
   appId: "1:638611639219:web:e32635983470c8f84919c6",
   measurementId: "G-T20N54D81J"
-};
+
     openai: "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" // ضعي مفتاحك المشحون هنا
 };
 
