@@ -1,11 +1,11 @@
 // 1. إعدادات المفاتيح
 const config = {
     firebase: {
-        apiKey: "YOUR_FIREBASE_KEY", // استبدليها ببياناتك من Firebase
-        projectId: "YOUR_PROJECT_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyCNWmnJygQGp6nAQ0pbBL8XJK3rKE_d-ug", // استبدليها ببياناتك من Firebase
+        projectId: "tagreedapp-72d72",
+        appId: "1:638611639219:web:e32635983470c8f84919c6"
     },
-    openai: "sk-xxxxxxxxxxxxxxxxxxxxxxxx" // ضعي مفتاحك المشحون هنا
+    openai: "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" // ضعي مفتاحك المشحون هنا
 };
 
 // 2. تهيئة Firebase للسحابة
