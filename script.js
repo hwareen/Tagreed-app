@@ -1,10 +1,14 @@
 // 1. إعدادات المفاتيح
-const config = {
-    firebase: {
-        apiKey: "AIzaSyCNWmnJygQGp6nAQ0pbBL8XJK3rKE_d-ug", // استبدليها ببياناتك من Firebase
-        projectId: "tagreedapp-72d72",
-        appId: "1:638611639219:web:e32635983470c8f84919c6"
-    },
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCNWmnJygQGp6nAQ0pbBL8XJK3rKE_d-ug",
+  authDomain: "tagreedapp-72d72.firebaseapp.com",
+  projectId: "tagreedapp-72d72",
+  storageBucket: "tagreedapp-72d72.firebasestorage.app",
+  messagingSenderId: "638611639219",
+  appId: "1:638611639219:web:e32635983470c8f84919c6",
+  measurementId: "G-T20N54D81J"
+};
     openai: "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" // ضعي مفتاحك المشحون هنا
 };
 
