@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 
 // 2. تهيئة Firebase للسحابة
-firebase.initializeApp(config.firebase);
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const chatViewport = document.getElementById('chat-viewport');
