@@ -13,7 +13,7 @@ const firebaseConfig = {
 };
 ////////
 
-const API_KEY = "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"
+const API_KEY = "AIzaSyCNWmnJygQGp6nAQ0pbBL8XJK3rKE_d-ug"
 
 const chatViewport = document.getElementById('chat-viewport');
 const userInput = document.getElementById('user-input');
