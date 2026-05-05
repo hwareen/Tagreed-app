@@ -1,36 +1,31 @@
+const OPENAI_KEY = "ضع_مفتاح_OpenAI_هنا"; // sk-xxxx
 
-  openai: "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" // ضعي مفتاحك المشحون هنا
-};
-////////
+const chatBox = document.getElementById('chat-box');
+const userMsgInput = document.getElementById('user-msg');
+const sendBtn = document.getElementById('send-btn');
 
-const API_KEY = "AIzaSyCNWmnJygQGp6nAQ0pbBL8XJK3rKE_d-ug"
-
-const chatViewport = document.getElementById('chat-viewport');
-const userInput = document.getElementById('user-input');
-const sendTrigger = document.getElementById('send-trigger');
-
-async function startConversation() {
-    const text = userInput.value.trim();
+async function handleChat() {
+    const text = userMsgInput.value.trim();
     if (!text) return;
 
-    appendBubble(text, 'user');
-    userInput.value = "";
+    addBubble(text, 'user');
+    userMsgInput.value = "";
 
-    const loading = appendBubble("تغريد تفكر...", 'tagreed');
+    const loading = addBubble("تغريد تفكر بعمق...", 'tagreed');
 
     try {
         const response = await fetch('https://openai.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
+                'Authorization': `Bearer ${OPENAI_KEY}`
             },
             body: JSON.stringify({
                 model: "gpt-4o-mini",
                 messages: [
                     { 
                         role: "system", 
-                        content: "أنتِ تغريد، أخصائية نفسية. حللي الاسم في أول رسالة: إذا كان ذكراً خاطبيه بالمذكر، وإذا أنثى بالمؤنث. كوني فخمة ودافئة." 
+                        content: "أنتِ تغريد، أخصائية نفسية راقية وفخمة. إذا ذكر المستخدم اسمه، حللي فوراً إذا كان ذكراً (أحمد، علي، إلخ) فخاطبيه بالمذكر. وإذا كان أنثى (سارة، ليلى، إلخ) فخاطبيها بالمؤنث. إذا لم يتضح، استخدمي صيغة المؤنث الافتراضية الدافئة." 
                     },
                     { role: "user", content: text }
                 ]
@@ -38,34 +33,28 @@ async function startConversation() {
         });
 
         const data = await response.json();
-        if (data.error) throw new Error(data.error.message);
-
-        loading.remove();
-        appendBubble(data.choices[0].message.content, 'tagreed');
+        
+        if (data.choices && data.choices[0]) {
+            loading.remove();
+            addBubble(data.choices[0].message.content, 'tagreed');
+        } else {
+            throw new Error("فشل الرد");
+        }
 
     } catch (err) {
-        loading.innerText = "عذراً، تأكدي من شحن رصيد الـ API في OpenAI.";
+        loading.innerText = "عذراً، أحتاج للتأكد من رصيدي أو مفتاح الـ API. أنا معكِ دائماً.";
         console.error(err);
     }
 }
 
-function appendBubble(text, type) {
+function addBubble(text, type) {
     const div = document.createElement('div');
-    div.className = `bubble ${type}`;
+    div.className = `msg ${type}`;
     div.innerText = text;
-    chatViewport.appendChild(div);
-    chatViewport.scrollTop = chatViewport.scrollHeight;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
     return div;
 }
 
-sendTrigger.addEventListener('click', startConversation);
-userInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') startConversation(); });
-///////////////////////////////////////
-
-
-    
-  
-   
-
-sendTrigger.addEventListener('click', startConversation);
-userInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') startConversation(); });
+sendBtn.addEventListener('click', handleChat);
+userMsgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleChat(); });
