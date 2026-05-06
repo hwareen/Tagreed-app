@@ -4,36 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تغريد | الفضاء النفسي الفخم</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root { --primary: #1E293B; --bg: #F8FAFC; --accent: #4A7C7A; }
+        
+        body { margin: 0; background: var(--bg); font-family: 'Cairo', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        
+        .app-container { width: 95%; max-width: 450px; height: 90vh; background: white; border-radius: 30px; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.05); overflow: hidden; position: relative; }
+        
+        header { padding: 20px; border-bottom: 1px solid #F1F5F9; display: flex; justify-content: space-between; align-items: center; }
+        header h1 { margin: 0; font-size: 22px; color: var(--primary); }
+        .emergency-call { text-decoration: none; color: #EF4444; font-size: 14px; font-weight: bold; }
+
+        /* شريط الوجوه التعبيرية */
+        .mood-selector { padding: 15px; background: #f8fafc; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .mood-selector p { margin: 0 0 10px 0; font-size: 14px; color: #64748b; }
+        .emoji-grid { display: flex; justify-content: center; gap: 12px; }
+        .emoji-grid button { background: white; border: 1px solid #e2e8f0; font-size: 22px; padding: 8px; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+        .emoji-grid button:hover { transform: scale(1.1); background: #f1f5f9; }
+
+        #chat-box { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        
+        .msg { max-width: 85%; padding: 15px 20px; font-size: 18px; border-radius: 20px; line-height: 1.6; animation: fadeInUp 0.3s ease; }
+        .tagreed { background: #F1F5F9; align-self: flex-start; border-bottom-right-radius: 2px; color: var(--primary); }
+        .user { background: var(--primary); color: white; align-self: flex-end; border-bottom-left-radius: 2px; }
+
+        footer { padding: 20px; background: white; border-top: 1px solid #F1F5F9; }
+        .input-group { display: flex; background: #F8FAFC; border-radius: 15px; padding: 5px; border: 1px solid #E2E8F0; }
+        input { flex: 1; border: none; background: transparent; outline: none; font-family: 'Cairo'; font-size: 17px; padding: 10px; }
+        #send-btn { background: var(--primary); color: white; border: none; border-radius: 12px; width: 45px; height: 45px; cursor: pointer; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 <body>
+
     <div class="app-container">
-        <header class="app-header">
-            <div class="brand">
-                <div class="avatar-box">
-                    <span class="status-indicator"></span>
-                    <img src="https://ui-avatars.com" alt="Tagreed">
-                </div>
-                <div class="brand-text">
-                    <h1>تغريد</h1>
-                    <p>أخصائية نفسية ذكية</p>
-                </div>
+        <header>
+            <div>
+                <h1>تغريد ✨</h1>
+                <small style="color: #64748b;">مساحتكِ الآمنة</small>
             </div>
             <a href="tel:+9665XXXXXXXX" class="emergency-call">طوارئ 🆘</a>
         </header>
 
-        <main id="chat-box" class="chat-content">
-            <div class="msg tagreed">أهلاً بك.. أنا تغريد. أخبرني باسمك الأول وكيف تشعر الآن؟</div>
+        <div class="mood-selector">
+            <p>كيف حال قلبكِ الآن؟</p>
+            <div class="emoji-grid">
+                <button onclick="sendEmoji('سعيد 😊')">😊</button>
+                <button onclick="sendEmoji('حزين 😔')">😔</button>
+                <button onclick="sendEmoji('قلق 😟')">😟</button>
+                <button onclick="sendEmoji('متعب 😫')">😫</button>
+                <button onclick="sendEmoji('غاضب 😡')">😡</button>
+            </div>
+        </div>
+
+        <main id="chat-box">
+            <div class="msg tagreed">أهلاً بكِ.. أنا تغريد. أخبريني باسمكِ وما الذي تشعرين به؟</div>
         </main>
 
-        <footer class="input-area">
+        <footer>
             <div class="input-group">
-                <input type="text" id="user-msg" placeholder="اكتب مشاعرك هنا..." autocomplete="off">
-                <button id="send-btn">➤</button>
+                <input type="text" id="user-msg" placeholder="اكتبي هنا..." autocomplete="off">
+                <button id="send-btn" onclick="handleChat()">➤</button>
             </div>
         </footer>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        // ضعي مفتاح Gemini الخاص بك هنا (يبدأ بـ AIza)
+        const GEMINI_KEY = "AIzaSyA3kfmCctS9FMnHNAndSbjXEo6qNELjPFY";
+
+        const chatBox = document.getElementById('chat-box');
+        const userMsgInput = document.getElementById('user-msg');
+
+        async function handleChat() {
+            const text = userMsgInput.value.trim();
+            if (!text || GEMINI_KEY.includes("ضعي")) return;
+
+            addBubble(text, 'user');
+            userMsgInput.value = "";
+            const loading = addBubble("تغريد تفكر...", 'tagreed');
+
+            try {
+                const url = `https://googleapis.com{GEMINI_KEY}`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: `أنتِ تغريد، أخصائية نفسية فخمة. حللي الاسم الأول في الرسالة: إذا كان ذكراً خاطبيه بالمذكر، وإذا أنثى بالمؤنث. الرسالة: ${text}` }] }]
+                    })
+                });
+
+                const data = await response.json();
+                loading.remove();
+
+                if (data.candidates && data.candidates[0].content) {
+                    addBubble(data.candidates[0].content.parts[0].text, 'tagreed');
+                } else {
+                    throw new Error();
+                }
+            } catch (err) {
+                loading.innerText = "عذراً، يرجى التأكد من المفتاح أو الاتصال بالإنترنت.";
+            }
+        }
+
+        function sendEmoji(mood) {
+            userMsgInput.value = "أشعر أنني " + mood;
+            handleChat();
+        }
+
+        function addBubble(text, type) {
+            const div = document.createElement('div');
+            div.className = `msg ${type}`;
+            div.innerText = text;
+            chatBox.appendChild(div);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return div;
+        }
+
+        userMsgInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') handleChat(); });
+    </script>
 </body>
 </html>
